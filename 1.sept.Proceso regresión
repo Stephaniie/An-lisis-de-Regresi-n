@@ -1,0 +1,46 @@
+#1 de septiembre 2016
+
+#Primero declaramos 2 variables con 10 entradas cada una
+estaturas<-c(1.2, 1.23, 1.19, 1.32, 1.28, 1.22, 1.17, 1.29, 1.33, 1.15)
+length(estaturas)
+nivel_economico<-c(110,130,108,167,156,115,104,138,170,107)
+length(nivel_economico)
+
+#Paso no 1. Graficar
+plot(nivel_economico, estaturas, ylab="Estatura", xlab="Ingreso económico",
+main="Gráfica de dispersión",pch=15, col=1:10)
+#Podemos ver una relación positiva
+
+#Paso no 2. Correlación
+cor(estaturas, nivel_economico)
+cor(nivel_economico, estaturas, method="pearson")
+cor(nivel_economico, estaturas, method="kendall")
+cor(nivel_economico, estaturas, method="spearman")
+#No importa cuál vaya primero, la correlación no cambia.
+#Podemos usar como argumento: method="pearson", "kendall", "spearman"
+
+#Paso no 3. Pruebas
+#H0=r=0 es decir, no hay relación  ;  Ha=!0  sí hay relación
+cor.test(estaturas, nivel_economico, method="pearson")
+#Si p-value es menor a 0.05 rechazamos H0 
+help(cor.test)
+1.607*exp(-5) #Es igual a 0.010827
+
+#Paso no 4. Modelo
+mod1<-lm(estaturas~nivel_economico)
+summary(mod1)
+#Los residuales nos generan las diferencias entre los valores ajustados
+#y los reales; en los resultados tenemos los coeficientes que contienen
+#que expone si los coeficientes son significativos
+
+#Paso no 5. Graficar
+plot(nivel_economico, estaturas, ylab="Estatura", xlab="Ingreso económico",
+main="Gráfica de dispersión con ajuste",pch=15, col=1:10)
+abline(mod1, col="violet", lty=5, lwd=3)
+help(abline)
+names(mod1)
+mod1$coefficients
+
+#TAREA: Buscar dos variables sobre las que supongamos una relación;
+#Buscar datos(16 mínimo) y hacer el proceso de dispersión.
+#Enviar por correo para el jueves.
