@@ -1,0 +1,22 @@
+#Proyecto Regresión
+n<-10
+alumno<-seq(1:n)
+calif.ingreso<-c(39,43,21,64,57,47,28,75,34,52)
+calif.1sem<-c(65,78,52,82,92,89,73,98,56,75)
+tabla<-data.frame(alumno, calif.ingreso, calif.1sem)
+tabla
+sumax<-sum(calif.ingreso)
+sumay<-sum(calif.1sem)
+sumax2<-sum(calif.ingreso*calif.ingreso)
+sumaxy<-sum(calif.ingreso*calif.1sem)
+x2<-calif.ingreso*calif.ingreso
+y2<-calif.1sem*calif.1sem
+xy<-calif.ingreso*calif.1sem
+s.xy<-sumaxy-sumax*sumay/n
+s.xx<-sumax2-(sumax*sumax)/n
+b1<-s.xy/s.xx
+b0<-mean(calif.1sem)-b1*mean(calif.ingreso)
+tabla2<-cbind(tabla, x2, y2, xy)
+Total<-c(sum(alumno), sum(calif.ingreso), sum(calif.1sem), sum(x2), sum(y2), sum(xy))
+tabla2<-rbind(tabla2, Total)
+print(paste0("La ecuación de la recta es y=", b0, " + ", b1, "x"))
