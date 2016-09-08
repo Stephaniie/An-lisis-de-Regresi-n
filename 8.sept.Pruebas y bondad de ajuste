@@ -1,0 +1,78 @@
+#Pruebas y bondad de ajuste
+#8 de septiembre 2016
+
+#Primero declaramos 2 variables con 10 entradas cada una
+estaturas<-c(1.2, 1.23, 1.19, 1.32, 1.28, 1.22, 1.17, 1.29, 1.33, 1.15)
+length(estaturas)
+nivel_economico<-c(110,130,108,167,156,115,104,138,170,107)
+length(nivel_economico)
+
+#Paso no 1. Graficar
+plot(nivel_economico, estaturas, ylab="Estatura", xlab="Ingreso económico",
+main="Gráfica de dispersión",pch=15, col=1:10)
+#Podemos ver una relación positiva
+
+#Paso no 2. Correlación
+cor(estaturas, nivel_economico)
+cor(nivel_economico, estaturas, method="pearson")
+cor(nivel_economico, estaturas, method="kendall")
+cor(nivel_economico, estaturas, method="spearman")
+#No importa cuál vaya primero, la correlación no cambia.
+#Podemos usar como argumento: method="pearson", "kendall", "spearman"
+
+#Paso no 3. Pruebas
+#H0=r=0 es decir, no hay relación  ;  Ha=!0  sí hay relación
+cor.test(estaturas, nivel_economico, method="pearson")
+#Si p-value es menor a 0.05 rechazamos H0 
+help(cor.test)
+1.607*exp(-5) #Es igual a 0.010827
+
+#Paso no 4. Modelo
+mod1<-lm(estaturas~nivel_economico)
+summary(mod1)
+#Los residuales nos generan las diferencias entre los valores ajustados
+#y los reales; en los resultados tenemos los coeficientes que contienen
+#que expone si los coeficientes son significativos
+
+#Paso no 5. Graficar
+plot(nivel_economico, estaturas, ylab="Estatura", xlab="Ingreso económico",
+main="Gráfica de dispersión con ajuste",pch=15, col=1:10)
+abline(mod1, col="violet", lty=5, lwd=3)
+help(abline)
+names(mod1)
+mod1$coefficients
+
+#8 de septiembre
+summary(mod1)$coefficients
+#se tiene un ajuste... 
+esta = .9323 + .0023 eco 
+### los valores de pvalue son inferiores a .05 por lo que.. 
+#1) relacion lineal entre la var dependiente y la independiente
+# relacion positiva
+#por cada unidad de ingreso que aumenta el padre o madre , aumenta la estatura en .0023 
+##el error estandar residual es .0198 este valor es muy importante debido a que permite medir
+#la calidad del modelo 
+#con este error generamos los intervalos de confianza 
+#los IC nos permiten complementar la informacion sobre las estimaciones que hacemos..
+## para calcular IC  se utiliza 
+confint (mod1, level =.95)
+#interpretacion... con una probabilida dde 95 % b0 se encuentra en el intervalo (.8542, 1.0105) 
+#y B1 se encuentra en el intervalo (.0017, .0029)
+
+### Bondad de ajuste#### 
+# con la bondad de ajuste verificamos la calidad del modelo al interpretar la variable dependiente
+#para eso se utiliza la tabla anova 
+anova (mod1)
+#en este caso la variabilidad explicada del modelo es .033022 = SSM
+### se revisa la SSR = .0031
+### revisando los valores del summary el estadistico F es mayor a 1 y p-value <.05
+## con estas revisiones se puede mencionar que se rechaza la hipotesis nula de F=1 
+# y se puede establecer un modelo
+#Revisar R2 multiple (% de variabilidad); arriba de 0.7 se considera buena
+# alrededor del 91% de la variabilidad de la estatura  es explicada por la recta ajustada.
+# Supuestos #
+base1<- data.frame(nivel_economico,estaturas)
+base1$fitted.mod1 <- fitted(mod1)
+base1$residuals.mod1 <- residuals(mod1)
+base1$rstudent.mod1 <- rstudent(mod1)
+#Para borrar las variables (todas)= rm(list=ls())
