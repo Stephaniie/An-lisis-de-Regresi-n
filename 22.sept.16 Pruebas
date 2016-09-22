@@ -1,0 +1,72 @@
+#Stephanie Villegas
+#22/09/2016
+
+library(car)
+install.packages("car")
+#Declaramos variables
+estaturas<-c(1.2, 1.23, 1.19, 1.32, 1.28, 1.22, 1.17, 1.29, 1.33, 1.15)
+length(estaturas)
+nivel_economico<-c(110,130,108,167,156,115,104,138,170,107)
+length(nivel_economico)
+base1<-data.frame(nivel_economico, estaturas)
+mod1<-lm(estaturas~nivel_economico)
+plot(nivel_economico, estaturas)
+abline(mod1)
+
+base1$ajuste.mod1<-fitted(mod1) #Estos son los datos ajustados
+base1$residuales.mod1<-residuals(mod1) #Residuos del modelo
+base1$rstudent.mod1<-rstudent(mod1) #Residuos estudentizados
+
+## Estas variable sse utilizan para comprobar los supuestos.
+## 1. Supuesto de normalidad:
+## Que los residuos tengan una distribución normal 
+## Para conocer la normalidad se utiliza la prueba de Shapiro
+shapiro.test (base1$rstudent.mod1)
+## Prueba de hipótesis para Shapiro test
+### Ho. la muestra tienen una dist normal 
+### Ha. la muestra no tiene dist normal
+### obtenenmos un pvalue de 0.8172 => no se rechaza la hipotesis nula
+### por lo tanto se acepta que hay normalidad. 
+### ahora veremos este resultado en un grafico
+qqnorm (base1$rstudent.mod1, main = "Normal (0,1)") 
+## se obtiene graficod de dispersión con la normal (0,1)
+qqline (base1$rstudent.mod1)
+
+### Ahora vamos a revisar la homogeneidad de varianzas
+### Para la homogeneidad se requiere de una libreria que se llama lmtest
+### para aplicar la prueba de Breusch - pagan test
+install.packages("lmtest")
+require (lmtest)
+bptest (mod1)
+### En esta prueba esperamos que haya homogeneidad de la varianza
+### Para eso tenemos que tener un pvalue mayor a .05 (0.6108)
+### por lo que para mod 1 se puede decir que hay homogeneidad en la varianza
+
+#### Prueba de autocorrelación o independencia
+#### En este caso se utiliza la prueba de Durbin Watson
+dwtest (mod1, alternative = "two.sided")
+## en este caso al igual que los demas se acepta hipotesis nula
+## debido a que tenemos un pvalue mayor a .05 (0.9142) esto quiere decir 
+## que no hay autocorrelacion en los residuos. 
+## Ahora vamos a comprobar esto de manera gráfica
+plot(base1$residuales.mod1, pch=c(115,116,101,112,104), ylab= "residuales", xlab= "in")
+abline(h=cor(base1$estaturas, base1$nivel_economico))
+### En este caso se puede ver que tenemos una gráfica sin relación que es
+## lo que estamos esperando, por lo que se confirma que no hay autocorrelacion
+
+#### Con estos datos, se podría garantizar que tenemos un buen modelo 
+### y podíamos predecir o analizar los coeficientes.
+
+#### Por otro lado, podríamos tener un problema de rangos si predecimos 
+## sin considerar rangos de nuestra variable, por lo que vamos a
+## definir una nueva base con los límites.
+limbase1 <- seq (min (base1$nivel_economico), max (base1$nivel_economico), length = 10)
+limbase1 <- data.frame (limbase1)
+limbase1
+limbasep <- predict.lm (mod1, limbase1, interval = "prediction", se.fit =TRUE, data = base1)
+head (limbasep$fit)### te generan los limites
+#### para dibujar los límites: 
+matplot (limbase1, limbasep$fit, type = "l", xlab = "Ingreso", ylab = "estaturas")
+
+#### TAREA: investigar como incorporar etiquetas.
+### Generar un ejemplo con error en normalidad
