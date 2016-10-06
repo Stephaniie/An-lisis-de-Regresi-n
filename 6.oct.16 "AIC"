@@ -1,0 +1,52 @@
+##Criterio de información de Akaike (AIC)
+#El problema de utilizar R2 para comparar modelos es que al introducir
+#nuevas variables al modelo, esta medida siempre crece.
+#Si estamos decidiendo cuál de todos los modelos ajusta mejor a los datos,
+#el modelo con más variables independientes siempre será el mejor ajustado.
+#Por eso se utiliza el AIC, una medida de ajuste que penaliza al modelo
+#por tener más variables. Está definido por:
+
+#AIC=(n)(log(SCR/n))+2k
+#SCR=Suma de cuadrados de los residuos del modelo
+#n=número de casos del modelo
+#k=Número de variables independientes
+
+#El problema es que el único criterio para el AIC es que si el AIC
+#es mayor, el modelo es peor; si el AIC es mejor, el modelo es mejor.
+#Es decir, esperamos un AIC más pequeño.
+#El AIC nos va a ayudar a decidir sobre un modelo
+
+#El método más recomendado es el step by step
+#Para R se utiliza la función step()
+#Adentro del método de step by step hay 3 modalidades:
+#1) Forward: Parte del cociente Bo y ahí va probando las variables indep.
+#para ver cuál es la que más aporta al modelo.
+#2) Backward: R empieza con todas las variables independientes y estudia si
+#el AI baja cuando hay cambios de variables
+#3) Both: Empieza como el forward, pero la diferencia es que se realizan
+#tests para conocer la variable independiente menos útil.
+
+#El método más recomendable es el backward, porque tiene un efecto represor
+#que permite probar cuando una variable tiene influencia sólo si otra 
+#variable se mantiene constante.
+
+#Vamos a calcular el modelo con las 2 variables independientes.
+moch<- data.frame (precio,capa, calidad)
+cor(moch, use="everything", method="pearson")
+mod1<-lm(precio~capa+calidad, data=moch)
+summary(mod1)
+
+step(mod1, direction="backward")
+
+#Aquí podemos ver que el método step analizó 2 modelos:
+#1) Precio ~ Capa+Calidad con un AIC=83.90
+#2) Precio ~ Calidad con un AIC=83.51
+
+#Ahora probamos con el metodo de both
+step(mod1, direction="both")
+#Tenemos un resultado igual al de backward por la forma en que se construye
+#este método (son pocas variables).
+step(mod1, direction="forward")
+#Sólo muestra el modelo completo porque es el que mayor AIC muestra
+
+#Nos quedaremos con el mejor AIC que es del modelo de Precio~Calidad
