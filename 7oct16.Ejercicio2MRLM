@@ -1,0 +1,69 @@
+#Ejercicio en clase
+
+y<-c(25.5, 31.2, 25.9, 38.4, 18.4, 26.7, 26.4,25.9,32,25.2,39.7,35.7,26.5)
+x1<-c(1.74,6.32,6.2,10.52,1.19,1.22,4.10,6.32,4.08,4.15,10.15,1.72,1.70)
+x2<-c(5.30,5.42,8.41,4.63,11.60,5.85,6.62,8.72,4.42,7.60,4.83,3.12,5.3)
+x3<-c(10.8,9.4,7.2,8.5,9.4,9.9,8,9.1,8.7,9.2,9.4,7.6,8.2)
+
+## 0) Analizar gráficos de dispersión y pruebas de correlación
+
+plot(x1,y, main="Diagrama de dispersión")
+plot(x2,y, main="Diagrama de dispersión")
+plot(x3,y, main="Diagrama de dispersión")
+
+base<-data.frame(y,x1,x2,x3)
+plot(base)
+
+cor(base, use="everything", method="pearson")
+            y         x1         x2         x3
+y   1.0000000  0.6542986 -0.7858050 -0.1862750
+x1  0.6542986  1.0000000 -0.1540256 -0.1443696
+x2 -0.7858050 -0.1540256  1.0000000  0.0748444
+x3 -0.1862750 -0.1443696  0.0748444  1.0000000
+
+## 1) Plantear la ecuación estimada original, es decir con todas las variables
+modelo<-lm(y~x1+x2+x3)
+summary(modelo)
+#Según la prueba t las tres variables son significativas
+#La ecuación sería: Y= 39.1767 + 1.0166x1 - 1.8608x2 -0.3461x3
+
+## 2) Analizar la anova, r cuadrada, estadístico F (mediante p.h.)
+anova(modelo)
+#Vemos que según la prueba F sólo x1 y x2 son significativas
+#La R2 es de 0.9119
+#El p-value es de 4.465e-05
+
+## 3) Comparar modelos con backward y analizar el modelo que genere la funcion step
+##    Es decir, analizar los incisos 0, 1 y 2 (en dado caso que la función step
+##    genere el mismo modelo que el modelo completo hacer caso omiso)
+step(modelo, method="backward")
+#Resultados:
+#AIC=22.15      y ~ x1 + x2 + x3
+#AIC=20.6       y ~ x1 + x2
+#Por lo tanto se considera que el segundo modelo es mejor
+#porque tiene un menor valor de AIC
+modelo2<-o<-lm(y~x1+x2)
+summary(modelo2)
+#La R2 es de 0.9088
+
+## 4) Realizar la prueba de 3 supuestos a este modelo (kolmogorov-smirnov,
+##    breusch-pagan, y durin-watson); analizar los resultados de las pruebas.
+
+base$ajus<-fitted(modelo2)
+base$resi<-residuals(modelo2)
+base$rstud<-rstudent(modelo2)
+
+ks.test(moch$rstud, pnorm)
+#El p-value es de 0.9719
+hist(base$rstud, xlab="residuales", main="Hist residuales")
+#Parecen una campana
+
+bptest(modelo2,studentize=FALSE)
+#El p-value es 0.394
+#¿Entonces la varianza no es constante a lo largo de la muestra?
+
+dwtest(modelo2,alternative="two.sided")
+#El p-value es 0.354
+#¿Entonces existe correlación en los residuos? (p-value<0.05)
+
+#fin del programa(y del ejercicio)
