@@ -24,3 +24,18 @@ View(mex_a)
 #Indicador8=; Indicador=
 mx_1<-subset(mex_a, mex_a$Indicator.Code=="SP.DYN.IMRT.MA.IN")
 View(mx_1)
+
+Falta: Deseamos estimar una gráfica de regresión (2005 - 2015 y sólo México Brasil y Argentina), donde las variables la variable dependiente es la esperanza de vida femenina, y las variables independientes son:
+
+TMI- Tasa de Mortalidad Infantil
+TGF-Tasa global de Fecundidad
+Porcentaje de hombres alfabetas
+Porcentaje de mujeres alfabetas
+Porcentaje de población urbana
+PIB per cápita
+Relación entre nacimientos y defunciones
+Tasa de crecimiento de la población
+(si no están las 8, mínimo 5)
+
+Hacer tres modelos, uno por país. Hacer gráficas de dispersión, pruebas de correlación, summary, anova, comparación de modelos, usar Step y entonces aplicar supuestos.
+Si hay NA's se elimina ese año
