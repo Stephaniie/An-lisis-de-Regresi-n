@@ -1,0 +1,26 @@
+#Guardando en Mis documentos el archivo csv
+library(foreign)
+base<- read.csv("WDI_Data.csv", header=T)
+
+#Creando una base con todos los datos para cada país (t=todo)
+mex_t<-subset(base, base$Country.Code=="MEX")
+bra_t<-subset(base, base$Country.Code=="BRA")
+arg_t<-subset(base, base$Country.Code=="ARG")
+
+#Creando una base con los años 2000-2016 para cada país (a=años)
+mex_a<-mex_t[,c(1:4,45:61)]
+bra_a<-bra_t[,c(1:4,45:61)]
+arg_a<-arg_t[,c(1:4,45:61)]
+View(mex_a)
+
+#Filtrando para las variables que queremos encontrar (f=final)
+#Indicador2=; Indicador=
+#Indicador2=; Indicador=
+#Indicador3=; Indicador=
+#Indicador4=; Indicador=
+#Indicador5=; Indicador=
+#Indicador6=; Indicador=
+#Indicador7=; Indicador=
+#Indicador8=; Indicador=
+mx_1<-subset(mex_a, mex_a$Indicator.Code=="SP.DYN.IMRT.MA.IN")
+View(mx_1)
