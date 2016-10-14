@@ -1,0 +1,45 @@
+install.packages("foreign")
+library(foreign)
+#Cargando la base completa
+sdem<- read.dbf("sdemt216.dbf")
+View(sdem)
+#Filtrando la base para Aguascalientes
+sdem2<- subset(sdem, sdem$CD_A==14)
+sdem2
+#Filtrando para personas de 15 a 65 años
+sdem3<- subset(sdem2, as.numeric(EDA)>14)
+sdem4<- subset(sdem3, as.numeric(EDA)<66)
+#Filtrando para ingreso entre $1 y $30 mil pesos}
+sdem5<- subset(sdem4, INGOCUP>1)
+sdem6<- subset(sdem5, INGOCUP<33001)
+#Filtrando para subordinados y remunerados asalariados
+sdem7<- subset(sdem6, REMUNE2C=1)
+#filtrando para las variables del modelo
+sdem8<- subset(sdem7, select=c(EDA,SEX, HRSOCUP, INGOCUP, ANIOS_ESC))
+#filtrando para los NA's
+sdem9<- na.omit(sdem8)
+View(sdem9)
+#Modelo de RM
+modelo<- lm(sdem9$INGOCUP~sdem9$EDA+sdem9$HRSOCUP+sdem9$SEX+sdem9$ANIOS_ESC)
+coef(modelo)
+summary.lm(modelo)
+#las variables HRSOCUP, sex2 y ANIOS_ESC son significativas en un0.1%
+resumen=summary.lm(modelo)
+attributes(resumen)
+#para hacer el análisis de covarianzas
+resumen$cov.unscaled 
+#calculando el R cuadrado del modelo
+resumen$r.squared
+#calculando el R ajustado
+resumen$adj.r.squared
+#prueba de la f
+resumen$fstatistic
+modelo$fitted.values
+modelo$residuals
+plot(modelo$residuals)
+#prueba de normalidad
+shapiro.test(modelo$residuals)
+install.packages("car")
+#prediccion
+prediccion=data.frame(data=sdem9,INGOCUP,EDA,SEX,HRSOCUP,ANIOS_ESC)
+predict(modelo,prediccion,[1:10, ])
