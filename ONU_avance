@@ -39,3 +39,75 @@ Tasa de crecimiento de la población
 
 Hacer tres modelos, uno por país. Hacer gráficas de dispersión, pruebas de correlación, summary, anova, comparación de modelos, usar Step y entonces aplicar supuestos.
 Si hay NA's se elimina ese año
+
+
+
+##Avanzando 14.oct.16
+
+#Guardando en Mis documentos el archivo csv
+library(foreign)
+base<- read.csv("WDI_Data.csv", header=T)
+
+#Creando una base con todos los datos para cada país (t=todo)
+mex_t<-subset(base, base$Country.Code=="MEX")
+bra_t<-subset(base, base$Country.Code=="BRA")
+arg_t<-subset(base, base$Country.Code=="ARG")
+
+#Creando una base con los años 2000-2016 para cada país (a=años)
+mex_a<-mex_t[,c(1:4,45:61)]
+bra_a<-bra_t[,c(1:4,45:61)]
+arg_a<-arg_t[,c(1:4,45:61)]
+View(mex_a)
+
+###Filtrando para las variables que queremos encontrar (f=final)
+#Indicador1=TMI; Indicador=Mortality rate, infant (per 1,000 live births)
+#Indicador2=TGF; Indicador=Fertility rate, total (births per woman)
+#Indicador3=Alfabetización en mujeres; Indicador=Literacy rate, adult female (% of females ages 15 and above)
+#Indicador4=Alfabetización en hombres; Indicador=Literacy rate, adult male (% of males ages 15 and above)
+#Indicador5=Urbanización; Indicador=Urban population (% of total)
+#Indicador6=PIBpc; Indicador=Adjusted net national income per capita (constant 2010 US$)
+#Indicador7=Nac-def; Indicador=Mortality rate, neonatal (per 1,000 live births)
+#Indicador8=Crec.pob. ; Indicador=Population growth (annual %)
+
+mx_0<-subset(mex_a, mex_a$Indicator.Code=="SP.DYN.LE00.FE.IN")
+mx_1<-subset(mex_a, mex_a$Indicator.Code=="SP.DYN.IMRT.IN")
+mx_2<-subset(mex_a, mex_a$Indicator.Code=="SP.DYN.TFRT.IN")
+mx_3<-subset(mex_a, mex_a$Indicator.Code=="SE.ADT.LITR.FE.ZS")
+mx_4<-subset(mex_a, mex_a$Indicator.Code=="SE.ADT.LITR.MA.ZS")
+mx_5<-subset(mex_a, mex_a$Indicator.Code=="SP.URB.TOTL.IN.ZS")
+mx_6<-subset(mex_a, mex_a$Indicator.Code=="NY.ADJ.NNTY.PC.KD")
+mx_7<-subset(mex_a, mex_a$Indicator.Code=="SH.DYN.NMRT")
+mx_8<-subset(mex_a, mex_a$Indicator.Code=="SP.POP.GROW")
+mex_final<-rbind(mx_0,mx_1, mx_2, mx_3, mx_4, mx_5, mx_6,mx_7, mx_8)
+
+br_0<-subset(bra_a, bra_a$Indicator.Code=="SP.DYN.LE00.FE.IN")
+br_1<-subset(bra_a, bra_a$Indicator.Code=="SP.DYN.IMRT.IN")
+br_2<-subset(bra_a, bra_a$Indicator.Code=="SP.DYN.TFRT.IN")
+br_3<-subset(bra_a, bra_a$Indicator.Code=="SE.ADT.LITR.FE.ZS")
+br_4<-subset(bra_a, bra_a$Indicator.Code=="SE.ADT.LITR.MA.ZS")
+br_5<-subset(bra_a, bra_a$Indicator.Code=="SP.URB.TOTL.IN.ZS")
+br_6<-subset(bra_a, bra_a$Indicator.Code=="NY.ADJ.NNTY.PC.KD")
+br_7<-subset(bra_a, bra_a$Indicator.Code=="SH.DYN.NMRT")
+br_8<-subset(bra_a, bra_a$Indicator.Code=="SP.POP.GROW")
+bra_final<-rbind(br_0, br_1, br_2, br_3, br_4, br_5, br_6, br_7, br_8)
+bra_datos<-bra_final[,c(5:21)]
+class(bra_datos)
+rownames(bra_datos)<-1:9
+colnames(bra_datos)<-2000:2016
+bra_fd<-t(bra_datos)
+
+ar_0<-subset(arg_a, arg_a$Indicator.Code=="SP.DYN.LE00.FE.IN")
+ar_1<-subset(arg_a, arg_a$Indicator.Code=="SP.DYN.IMRT.IN")
+ar_2<-subset(arg_a, arg_a$Indicator.Code=="SP.DYN.TFRT.IN")
+ar_3<-subset(arg_a, arg_a$Indicator.Code=="SE.ADT.LITR.FE.ZS")
+ar_4<-subset(arg_a, arg_a$Indicator.Code=="SE.ADT.LITR.MA.ZS")
+ar_5<-subset(arg_a, arg_a$Indicator.Code=="SP.URB.TOTL.IN.ZS")
+ar_6<-subset(arg_a, arg_a$Indicator.Code=="NY.ADJ.NNTY.PC.KD")
+ar_7<-subset(arg_a, arg_a$Indicator.Code=="SH.DYN.NMRT")
+ar_8<-subset(arg_a, arg_a$Indicator.Code=="SP.POP.GROW")
+arg_final<-rbind(ar_0, ar_1, ar_2, ar_3, ar_4, ar_5, ar_6, ar_7, ar_8)
+
+#Tenemos ya tres bases, una para cada país, con las 8 vi y la vd
+mex_final
+bra_final
+arg_final
