@@ -1,0 +1,8 @@
+library(foreign)
+base2<-read.dbf("eness2013_cb_enoe_sdem.dbf")
+mas60<-subset(base2, base2$EDA7C==6)
+class(base2$EDA7C)
+Imms<-subset(mas60, mas60$P13_1==1)
+class(mas60$P13_1)
+View(Imms)
+#3 de nov 2016
