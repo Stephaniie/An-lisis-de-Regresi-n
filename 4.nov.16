@@ -1,0 +1,12 @@
+#4 de noviembre de 2016
+library(foreign)
+base1<-read.dbf("mti2013_05_17_sdem_precodificado.dbf")
+base2<-read.dbf("enoe_sdem_0a4_y_18ymas.dbf")
+mti2013v1<-subset(base1, base1$CLASE2==1)
+mti2013v2<-subset(mti2013v1, mti2013v1$T_LOC==4)
+#Si se ponen las dos condiciones juntas
+mti2013v3<-subset(base1, base1$CLASE2==1 & base1$T_LOC==4)
+install.packages("questionr")
+library(questionr)
+wtd.table(mti2013v3$SEX, weights= mti2013v3$FAC_MTI)
+
