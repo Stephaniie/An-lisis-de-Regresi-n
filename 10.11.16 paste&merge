@@ -1,0 +1,22 @@
+library(foreign)
+base1<-read.dbf("C://Users//sala-c9//Desktop//regresion//coe1t216.dbf")
+base2<-read.dbf("C://Users//sala-c9//Desktop//regresion//coe2t216.dbf")
+base3<-read.dbf("C://Users//sala-c9//Desktop//regresion//sdemt216.dbf")
+#variables identificador CD_A,ENT,CON,v_SEL,N_HOG,M_MUD,N_REN
+folio<-paste(base3$CD_A,base3$ENT,base3$CON,base3$V_SEL,base3$N_HOG,base3$N_REN)
+#crear una nueva base con la llave
+x<-data.frame(base3,folio)
+#mismo preocedimiento para la base coe1
+folio<-paste(base1$CD_A,base1$ENT,base1$CON,base1$V_SEL,base1$N_HOG,base1$N_REN)
+x1<-data.frame(base1,folio)
+#procedimiento para base coe2
+folio<-paste(base2$CD_A,base2$ENT,base2$CON,base2$V_SEL,base2$N_HOG,base2$N_REN)
+x2<-data.frame(base2,folio)
+#pega las 3 bases de datos con el folio comun
+total<-merge(x,x1,by="folio",all.x = TRUE)
+enoe<-merge(total,x2,by="folio",all.x=TRUE)
+#tarea eliminar variables   que aparecen en las 2 bases
+ls(x)
+install.packages("questionr")
+require(questionr)
+table(enoe$SEX,enoe$P1)
