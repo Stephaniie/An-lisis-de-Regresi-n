@@ -1,0 +1,35 @@
+#17 de enero de 2016
+#Stephanie Villegas Mendoza::Evaluación
+library(foreign)
+base<-as.data.frame(read.spss("C:/Users/sala-c11/Documents/solorural.sav"))
+
+install.packages("questionr")
+library(questionr)
+#Para la primera tabla
+wtd.table(base$sex, weights = base$fac_mti) #Filtramos por sexo y aplicamos factores
+sum(wtd.table(base$sex, weights = base$fac_mti)) #Para el total
+table(base$sex) #Filtramos la muestra por sexo
+sum(table(base$sex)) #Para el total
+
+#Ocupados es igual a clase2=1
+wtd.table(base$clase2==1, weights = base$fac_mti)
+wtd.table(base$clase2, base$sex, weights = base$fac_mti)
+base1<-subset(base, base$clase2==1)
+wtd.table(base1$clase2==1, weights = base1$fac_mti)
+#Para obtener los grupos de edad
+wtd.table(base1$sex, base1$eda, weights=base1$fac_mti) #los ocupados tienen mas de 12 años
+#(12-17)
+class(base1$eda) #Es una variable numérica
+wtd.table(base1$eda <10,base1$sex, weights = base1$fac_mti )
+#Nadie que trabaja tiene menos de 10 años
+wtd.table(base1$eda <14,base1$sex, weights = base1$fac_mti )
+wtd.table(base1$eda >13,base1$sex, weights = base1$fac_mti )
+
+#Según asistencia escolar
+wtd.table(base1$asis, base1$sex, weights = base1$fac_mti)
+
+#Según tamaño del hogar
+wtd.table(base1$tam_hog, base1$sex, weights = base1$fac_mti)
+
+#Fin del programa
+##Adjunté el excel con los resultados
