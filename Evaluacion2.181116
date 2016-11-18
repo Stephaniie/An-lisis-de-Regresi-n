@@ -1,0 +1,75 @@
+#18 de enero de 2016
+#Stephanie Villegas Mendoza::Evaluación parte2
+#Etiquetado y modelo
+library(foreign)
+base<-as.data.frame(read.spss("C:/Users/sala-c10/Documents/solorural.sav"))
+
+install.packages("questionr")
+library(questionr)
+
+base1<-subset(base, base$clase2==1)
+base2<-subset(base, base$c_ocu=="ocupado")
+
+table(base2$t_per)
+
+install.packages("plyr")
+library(plyr)
+base2$t_per<-revalue(factor(base2$t_per), c("4"=NA))
+table(base2$t_per)
+#Ya no aparece la categoría 4
+
+#Variables a utilizar:
+#Sexo, edad, asistencia escolar, sex_jefe, t_apo1 , ocu_jefe, escol_jefe
+
+table(base2$sex)
+#Sólo hay hombres y mujeres, no hay problema
+
+table(base2$eda1)
+#Hay edades de 1,2,3, reetiquetamos
+base2$eda1<-revalue(factor(base2$eda1), c("5 a 9"="5 a 9 años", "2"="10 a 13 años", "3"="14 a 17 años"))
+
+table(base2$asis)
+#Asiste y no asiste son las únicas categorías, sin problema
+
+table(base2$sex_jefe)
+#Hombre y mujer, no hay problema
+
+table(base2$t_apo1)
+#Hay 5 categorías
+#Beca para estudiar 919                 
+#Otro programa de gobierno 401                                   
+#Ayuda de un familiar que vive en otro hogar 24                       
+#Otro tipo de ayuda 3                                      
+#No ha recibido ayuda 932
+
+table(base2$ocu_jefe)
+#Solo hay ocupado y desocupado
+
+table(base2$escol_jefe)
+#Hay que corregir los NE
+base2$escol_jefe<-revalue((base2$escol_jefe), c("No especificado"=NA))
+#Listo, eliminamos los NE
+
+table(base2$t_per)
+#solo tiene 1,2,3 hay que etiquetar
+class(base2$t_per)
+levels(base2$t_per)<-c("Familiar", "No familiar", "Solo o por su cuenta")
+#listo, está etiquetado
+
+table(base2$t_per)
+
+
+##Regresión logística
+library(nnet)
+mod1<-multinom(t_per~1, data=base2, trace=F)
+mod1 #AIC=1842.664
+modfin<-multinom(t_per~sex+eda1+asis+sex_jefe+escol_jefe+t_apo1+ocu_jefe, data=base2)
+modfin #AIC=1482.664
+g<-summary(modfin, wald=T)
+print(g)
+
+install.packages("stargazer")
+library(stargazer)
+s<-stargazer(modfin, type="html", title="Coefficients", summary=T)
+stargazer(modfin, type="text", title="mlogit", digits=2, out="C:/Users/sala-c10/Documents/hola.pdf", summary=T)
+help("stargazer")
