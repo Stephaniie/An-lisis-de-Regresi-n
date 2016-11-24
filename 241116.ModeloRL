@@ -1,0 +1,81 @@
+library(foreign)
+base<-as.data.frame(read.spss("C:/Users/Sala-C5.RTIC-C5-HP/Documents/solorural.sav"))
+View(base)
+
+install.packages("questionr")
+library(questionr)
+
+base1<-subset(base, base$clase2==1)
+base2<-subset(base, base$c_ocu=="ocupado")
+
+table(base2$t_per)
+
+install.packages("plyr")
+library(plyr)
+base2$t_per<-revalue(factor(base2$t_per), c("4"=NA))
+table(base2$t_per)
+#Ya no aparece la categoría 4
+
+#Variables a utilizar:
+#Sexo, edad, asistencia escolar, sex_jefe, t_apo1 , ocu_jefe, escol_jefe
+
+table(base2$sex)
+#Sólo hay hombres y mujeres, no hay problema
+
+table(base2$eda1)
+#Hay edades de 1,2,3, reetiquetamos
+base2$eda1<-revalue(factor(base2$eda1), c("1"="5 a 9 años", "2"="10 a 13 años", "3"="14 a 17 años"))
+
+table(base2$asis)
+#Asiste y no asiste son las únicas categorías, sin problema
+
+table(base2$sex_jefe)
+#Hombre y mujer, no hay problema
+
+table(base2$t_apo1)
+#Hay 5 categorías
+#Beca para estudiar 919                 
+#Otro programa de gobierno 401                                   
+#Ayuda de un familiar que vive en otro hogar 24                       
+#Otro tipo de ayuda 3                                      
+#No ha recibido ayuda 932
+
+table(base2$ocu_jefe)
+#Solo hay ocupado y desocupado
+
+table(base2$escol_jefe)
+#Hay que corregir los NE
+base2$escol_jefe<-revalue((base2$escol_jefe), c("No especificado"=NA))
+#Listo, eliminamos los NE
+
+table(base2$tam_hog)
+#1 a 3, 4 a 5, 6 y 7, 8 y mas; no hay problema
+
+table(base2$t_per)
+#solo tiene 1,2,3 hay que etiquetar
+class(base2$t_per)
+levels(base2$t_per)<-c("Familiar", "No familiar", "Solo o por su cuenta")
+#listo, está etiquetado
+
+install.packages("Hmisc")
+library(Hmisc)
+install.packages("car")
+library(car)
+
+wtd.table(base2$eda1, weights=base2$fac_mti)
+modfin<-multinom(t_per~sex+eda1+asis+sex_jefe+tam_hog+t_apo1+ocu_jefe, data=base2)
+modfin
+#AIC=1485.093
+g<-summary(modfin, wald=T)
+print(g)
+
+install.packages("stargazer")
+library(stargazer)
+s<-stargazer(modfin, type="html", title="Coefficients", summary=T)
+stargazer(modfin, type="text", title="mlogit", digits=2, out="C:/Users/sala-c10/Documents/hola.pdf", summary=T)
+
+##Cuando exp(B) sale mayor a 1, entonces es n veces mayor la probabilidad
+##Cuando exp(B) sale menor a 1, entonces es (1-p) veces menor la probabilidad...
+
+#La ventaja del logistica es que no tiene que cumplir los supuestos de la lineal
+#Y es más facil de interpretar
